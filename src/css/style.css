@@ -30,6 +30,16 @@ h3 {
     box-shadow: 0px 3px 3px rgb(142, 142, 142);
 }
 
+.task-sep {
+    background-color: rgb(151, 151, 151);
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px rgb(142, 142, 142);
+}
+
+.task:hover {
+    cursor: grabbing;
+}
+
 a {
     text-decoration: none;
     opacity: 50%;
@@ -40,10 +50,15 @@ a:visited {
 }
 
 .input-text {
+    position: relative;
     border: 0px solid;
-    margin: auto;
+    margin: 0px;
     font-size: 20px;
 }
+
+.input-text::-webkit-scrollbar {
+    display: none;
+  }
 
 textarea:focus, input:focus{
     outline: none;
@@ -56,11 +71,48 @@ textarea:focus, input:focus{
     float: right;
 }
 
+.action-close {
+    height: 15px;
+    width: 15px;
+    background-image: url("../img/close.png");
+    background-size: 15px 15px;
+    margin-left: 10px;
+    margin-top: 10px;
+    float: left;
+}
+
+.action-add {
+    background-color: rgb(113, 218, 176);
+    border-radius: 3px;
+    box-shadow: 0px 3px 3px black;
+    font-size: 20px;
+    border: 0px solid;
+    width: 100px;
+    height: 35px;
+}
+
+.action-close:hover {
+    cursor: pointer;
+}
+
+.action-add:hover {
+    cursor: pointer;
+}
+
 .close-btn:hover {
     cursor: pointer;
+}
+
+.action {
+    display: flex;
 }
 
 .active {
     background-image: url("../img/close.png");
     background-size: 12px 12px;
+}
+
+.dragged {
+    position: absolute;
+    z-index: 999;
 }
