@@ -40,6 +40,10 @@ h3 {
     cursor: grabbing;
 }
 
+.input-text:hover {
+    cursor: grabbing;
+}
+
 a {
     text-decoration: none;
     opacity: 50%;

@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newTask.appendChild(closeBtn);
                 newTask.appendChild(newInput);
 
-                newTask.addEventListener('mouseover', () => {
+                newTask.addEventListener('mousemove', () => {
                     closeBtn.classList.add('active');
                     closeBtn.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -62,11 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
             newInput.setAttribute('rows', '2');
             newInput.setAttribute('cols', '23');
             newInput.classList.add('input-text');
+            newInput.classList.add('edit');
 
             newTask.appendChild(closeBtn);
             newTask.appendChild(newInput);
 
-            newTask.addEventListener('mouseover', () => {
+            newTask.addEventListener('mousemove', () => {
                 closeBtn.classList.add('active');
                 closeBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 e.target.parentElement.insertAdjacentElement('beforebegin', btn);
                 newInput.readOnly = true;
+                newInput.classList.remove('edit');
                 action.remove();
             });
             action.lastChild.addEventListener('click', (e) => {
@@ -119,13 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
         let shiftX;
         let shiftY;
 
-        const onMouseOver = (e) => {
-            actualElement.style.top = e.clientY - shiftY + 'px';
-            actualElement.style.left = e.clientX - shiftX + 'px';
+        const onMouseMove = (e) => {
+            // actualElement.style.top = e.clientY - shiftY + 'px';
+            // actualElement.style.left = e.clientX - shiftX + 'px';
+
+            actualElement.style.top = e.clientY + 'px';
+            actualElement.style.left = e.clientX + 'px';
         };
 
         const onMouseUp = (e) => {
             const mouseUpItem = e.target;
+            console.log(e.target.parentElement);
             if (mouseUpItem.classList.contains('task')) {
                 mouseUpItem.parentElement.insertBefore(actualElement, mouseUpItem);
             } else if (mouseUpItem.classList.contains('input-text')) {
@@ -138,21 +144,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
             actualElement.classList.remove('dragged');
             actualElement = undefined;
+            shiftX = undefined;
+            shiftY = undefined;
 
             document.documentElement.removeEventListener('mouseup', onMouseUp);
-            document.documentElement.removeEventListener('mouseover', onMouseOver);
+            document.documentElement.removeEventListener('mousemove', onMouseMove);
         };
         card.addEventListener('mousedown', (e) => {
+            console.log(e.target);
             if (e.target.classList.contains('task')) {
-                e.preventDefault();
+                if (e.target.children[1].classList.contains('edit') === false) {
+                    e.preventDefault();
 
-                shiftX = e.clientX - e.target.getBoundingClientRect().left;
-                shiftY = e.clientY - e.target.getBoundingClientRect().top;
+                    shiftX = e.clientX - e.target.getBoundingClientRect().left;
+                    shiftY = e.clientY - e.target.getBoundingClientRect().top;
 
-                actualElement = e.target;
-                actualElement.classList.add('dragged');
-                document.documentElement.addEventListener('mouseup', onMouseUp);
-                document.documentElement.addEventListener('mouseover', onMouseOver);
+                    actualElement = e.target;
+                    actualElement.classList.add('dragged');
+                    console.log(actualElement);
+                    document.documentElement.addEventListener('mouseup', onMouseUp);
+                    document.documentElement.addEventListener('mousemove', onMouseMove);
+                }
+            } else if (e.target.classList.contains('input-text')) {
+                if (e.target.classList.contains('edit') === false) {
+                    e.preventDefault();
+                    shiftX = e.clientX - e.target.parentElement.getBoundingClientRect().left;
+                    shiftY = e.clientY - e.target.parentElement.getBoundingClientRect().top;
+
+                    actualElement = e.target.parentElement;
+                    actualElement.classList.add('dragged');
+                    console.log(actualElement);
+                    document.documentElement.addEventListener('mouseup', onMouseUp);
+                    document.documentElement.addEventListener('mousemove', onMouseMove);
+                }
             }
         });
     }
