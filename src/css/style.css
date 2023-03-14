@@ -38,14 +38,6 @@ h3 {
     box-shadow: 0px 3px 3px rgb(142, 142, 142);
 }
 
-.task:hover {
-    cursor: grabbing;
-}
-
-.input-text:hover {
-    cursor: grabbing;
-}
-
 a {
     text-decoration: none;
     opacity: 50%;
@@ -99,6 +91,10 @@ textarea:focus, input:focus{
 
 .action-close:hover {
     cursor: pointer;
+}
+
+.input-text:hover {
+    cursor: default;
 }
 
 .action-add:hover {

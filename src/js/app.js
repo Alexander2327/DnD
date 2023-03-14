@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const onMouseUp = (e) => {
+            e.target.style.cursor = 'default';
             actualElement.hidden = true;
             const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
             actualElement.hidden = false;
@@ -153,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('task')) {
                 if (e.target.children[1].classList.contains('edit') === false) {
+                    e.target.style.cursor = 'grabbing';
                     e.preventDefault();
 
                     shiftX = e.clientX - e.target.getBoundingClientRect().left;
@@ -166,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (e.target.classList.contains('input-text')) {
                 if (e.target.classList.contains('edit') === false) {
                     e.preventDefault();
+                    e.target.style.cursor = 'grabbing';
                     shiftX = e.clientX - e.target.parentElement.getBoundingClientRect().left;
                     shiftY = e.clientY - e.target.parentElement.getBoundingClientRect().top;
 
@@ -173,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     actualElement.classList.add('dragged');
                     document.documentElement.addEventListener('mouseup', onMouseUp);
                     document.documentElement.addEventListener('mousemove', onMouseMove);
+                } else {
+                    e.target.style.cursor = 'text';
                 }
             }
         });
