@@ -18,7 +18,9 @@
 
 h3 {
     text-align: left;
+    margin-top: 0px;
     margin-bottom: 20px;
+    height: 20px;
 }
 
 .task {

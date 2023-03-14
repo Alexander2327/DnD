@@ -122,24 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
         let shiftY;
 
         const onMouseMove = (e) => {
-            // actualElement.style.top = e.clientY - shiftY + 'px';
-            // actualElement.style.left = e.clientX - shiftX + 'px';
-
-            actualElement.style.top = e.clientY + 'px';
-            actualElement.style.left = e.clientX + 'px';
+            actualElement.style.top = e.clientY - shiftY + 'px';
+            actualElement.style.left = e.clientX - shiftX + 'px';
         };
 
         const onMouseUp = (e) => {
-            const mouseUpItem = e.target;
-            console.log(e.target.parentElement);
-            if (mouseUpItem.classList.contains('task')) {
-                mouseUpItem.parentElement.insertBefore(actualElement, mouseUpItem);
-            } else if (mouseUpItem.classList.contains('input-text')) {
-                mouseUpItem.parentElement.parentElement.insertBefore(actualElement, mouseUpItem.parentElement);
-            } else if (mouseUpItem.classList.contains('task-container')) {
-                mouseUpItem.insertBefore(actualElement, [...mouseUpItem.children][1]);
-            } else if (mouseUpItem.classList.contains('add')) {
-                mouseUpItem.parentElement.insertBefore(actualElement, mouseUpItem);
+            actualElement.hidden = true;
+            const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+            actualElement.hidden = false;
+            if (elemBelow.classList.contains('task')) {
+                elemBelow.parentElement.insertBefore(actualElement, elemBelow);
+            } else if (elemBelow.classList.contains('input-text')) {
+                elemBelow.parentElement.parentElement.insertBefore(actualElement, elemBelow.parentElement);
+            } else if (elemBelow.classList.contains('task-container')) {
+                elemBelow.insertBefore(actualElement, [...elemBelow.children][1]);
+            } else if (elemBelow.classList.contains('add')) {
+                elemBelow.parentElement.insertBefore(actualElement, elemBelow);
+            } else if (elemBelow.classList.contains('header')) {
+                elemBelow.insertAdjacentElement('afterend', actualElement);
             }
 
             actualElement.classList.remove('dragged');
@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.removeEventListener('mousemove', onMouseMove);
         };
         card.addEventListener('mousedown', (e) => {
-            console.log(e.target);
             if (e.target.classList.contains('task')) {
                 if (e.target.children[1].classList.contains('edit') === false) {
                     e.preventDefault();
@@ -161,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     actualElement = e.target;
                     actualElement.classList.add('dragged');
-                    console.log(actualElement);
                     document.documentElement.addEventListener('mouseup', onMouseUp);
                     document.documentElement.addEventListener('mousemove', onMouseMove);
                 }
@@ -173,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     actualElement = e.target.parentElement;
                     actualElement.classList.add('dragged');
-                    console.log(actualElement);
                     document.documentElement.addEventListener('mouseup', onMouseUp);
                     document.documentElement.addEventListener('mousemove', onMouseMove);
                 }
