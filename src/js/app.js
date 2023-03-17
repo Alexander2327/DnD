@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     closeBtn.classList.remove('active');
                 });
 
-                document.querySelector(`.${key.toLowerCase()}`).insertBefore(newTask, document.querySelector(`.${key.toLowerCase()}`).lastElementChild);
+                document.querySelector(`.${key.toLowerCase()}`).children[1].append(newTask);
             }
         });
     }
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const action = document.querySelector('.action');
                     if (action) {
                         action.remove();
-                        e.target.parentElement.insertAdjacentElement('afterend', btn);
+                        e.target.closest('.task-container').append(btn);
                     }
                     e.target.parentElement.remove();
                 });
@@ -88,30 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
             let currentCard;
             if (parent) {
                 currentCard = parent;
-                currentCard.insertBefore(newTask, e.target);
+                currentCard.children[1].prepend(newTask);
             } else {
                 currentCard = document.querySelector(`.${e.target.parentElement.parentElement.className.split(' ')[1]}`);
-                currentCard.insertBefore(newTask, e.target.parentElement);
+                currentCard.children[1].prepend(newTask);
             }
-            btn.remove();
 
             const action = document.createElement('div');
             action.classList.add('action');
             action.innerHTML = '<button class="action-add" type="button">Add Card</button> <div class="action-close"></div>';
+            e.target.insertAdjacentElement('beforebegin', action);
+            btn.remove();
             action.firstChild.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.target.parentElement.insertAdjacentElement('beforebegin', btn);
+                e.target.closest('.task-container').append(btn);
                 newInput.readOnly = true;
                 newInput.classList.remove('edit');
                 action.remove();
             });
             action.lastChild.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.target.parentElement.insertAdjacentElement('beforebegin', btn);
+                e.target.closest('.task-container').append(btn);
                 newTask.remove();
                 action.remove();
             });
-            newTask.insertAdjacentElement('afterend', action);
         });
     }
 
@@ -124,6 +124,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const onMouseMove = (e) => {
             actualElement.style.top = e.clientY - shiftY + 'px';
             actualElement.style.left = e.clientX - shiftX + 'px';
+
+            actualElement.hidden = true;
+            const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+            actualElement.hidden = false;
+
+            const newEl = document.createElement('div');
+            newEl.style.width = actualElement.offsetWidth - 28 + 'px';
+            newEl.style.height = actualElement.offsetHeight - 25 + 'px';
+            newEl.classList.add('shadow');
+
+            if (elemBelow.classList.contains('content') && !elemBelow.hasChildNodes()) {
+                elemBelow.append(newEl);
+                elemBelow.classList.remove('drop');
+            }
+            if (elemBelow.classList.contains('input-text') && elemBelow.closest('.content').classList.contains('drop')) {
+                elemBelow.closest('.task').insertAdjacentElement('beforebegin', newEl);
+                elemBelow.closest('.task').insertAdjacentElement('afterend', newEl.cloneNode(true));
+                elemBelow.closest('.content').classList.remove('drop');
+            }
+            if (document.querySelector('.shadow') && !elemBelow.closest('.content')) {
+                document.querySelector('.shadow').closest('.content').classList.add('drop');
+                document.querySelectorAll('.shadow').forEach((e) => e.remove());
+            }
         };
 
         const onMouseUp = (e) => {
@@ -132,15 +155,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
             actualElement.hidden = false;
             if (elemBelow.classList.contains('task')) {
-                elemBelow.parentElement.insertBefore(actualElement, elemBelow);
+                elemBelow.closest('.content').insertBefore(actualElement, elemBelow);
+                elemBelow.closest('.content').classList.add('drop');
+                document.querySelectorAll('.shadow').forEach((e) => e.remove());
             } else if (elemBelow.classList.contains('input-text')) {
-                elemBelow.parentElement.parentElement.insertBefore(actualElement, elemBelow.parentElement);
-            } else if (elemBelow.classList.contains('task-container')) {
-                elemBelow.insertBefore(actualElement, [...elemBelow.children][1]);
-            } else if (elemBelow.classList.contains('add')) {
-                elemBelow.parentElement.insertBefore(actualElement, elemBelow);
-            } else if (elemBelow.classList.contains('header')) {
+                elemBelow.closest('.content').insertBefore(actualElement, elemBelow.parentElement);
+                elemBelow.closest('.content').classList.add('drop');
+                document.querySelectorAll('.shadow').forEach((e) => e.remove());
+            } else if (elemBelow.classList.contains('content')) {
+                if (!elemBelow.cheldren) {
+                    elemBelow.append(actualElement);
+                    elemBelow.closest('.content').classList.add('drop');
+                    document.querySelectorAll('.shadow').forEach((e) => e.remove());
+                }
+            } else if (elemBelow.classList.contains('shadow')) {
                 elemBelow.insertAdjacentElement('afterend', actualElement);
+                elemBelow.closest('.content').classList.add('drop');
+                document.querySelectorAll('.shadow').forEach((e) => e.remove());
             }
 
             actualElement.classList.remove('dragged');
@@ -191,7 +222,7 @@ window.addEventListener('beforeunload', () => {
     for (const card of cards) {
         tasksInfo[[...card.children][0].textContent] = [];
         for (const task of tasks) {
-            if ([...task.children][1].parentElement.parentElement.className === card.className) {
+            if ([...task.children][1].closest('.task-container').className === card.className) {
                 tasksInfo[[...card.children][0].textContent].push([...task.children][1].value);
             }
         }
