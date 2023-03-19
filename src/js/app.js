@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
             actualElement.hidden = false;
 
+            const { top } = elemBelow.getBoundingClientRect();
+
             const newEl = document.createElement('div');
             newEl.style.width = actualElement.offsetWidth - 28 + 'px';
             newEl.style.height = actualElement.offsetHeight - 25 + 'px';
@@ -139,8 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 elemBelow.classList.remove('drop');
             }
             if (elemBelow.classList.contains('input-text') && elemBelow.closest('.content').classList.contains('drop')) {
-                elemBelow.closest('.task').insertAdjacentElement('beforebegin', newEl);
-                elemBelow.closest('.task').insertAdjacentElement('afterend', newEl.cloneNode(true));
+                if (e.pageY > window.scrollY + top + elemBelow.closest('.task').offsetHeight / 2) {
+                    elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task').nextElementSibling);
+                  } else {
+                    elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task'));
+                  }
                 elemBelow.closest('.content').classList.remove('drop');
             }
             if (document.querySelector('.shadow') && !elemBelow.closest('.content')) {
