@@ -139,13 +139,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elemBelow.classList.contains('content') && !elemBelow.hasChildNodes()) {
                 elemBelow.append(newEl);
                 elemBelow.classList.remove('drop');
-            }
-            if (elemBelow.classList.contains('input-text') && elemBelow.closest('.content').classList.contains('drop')) {
+            } else if ((elemBelow.classList.contains('input-text') || elemBelow.classList.contains('task')) && elemBelow.closest('.content').classList.contains('drop')) {
                 if (e.pageY > window.scrollY + top + elemBelow.closest('.task').offsetHeight / 2) {
                     elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task').nextElementSibling);
-                  } else {
+                } else {
                     elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task'));
-                  }
+                }
+                elemBelow.closest('.content').classList.remove('drop');
+            } else if ((elemBelow.classList.contains('input-text') || elemBelow.classList.contains('task')) && !elemBelow.closest('.content').classList.contains('drop')) {
+                if (elemBelow.closest('.content').querySelector('.shadow')) {
+                    elemBelow.closest('.content').querySelector('.shadow').remove();
+                }
+                if (e.pageY > window.scrollY + top + elemBelow.closest('.task').offsetHeight / 2) {
+                    elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task').nextElementSibling);
+                } else {
+                    elemBelow.closest('.content').insertBefore(newEl, elemBelow.closest('.task'));
+                }
                 elemBelow.closest('.content').classList.remove('drop');
             }
             if (document.querySelector('.shadow') && !elemBelow.closest('.content')) {
